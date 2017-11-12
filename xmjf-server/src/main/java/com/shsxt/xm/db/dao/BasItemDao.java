@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface BasItemDao extends BaseDao<BasItem> {
     List<BasItemDto> queryBasItemsByParams(BasItemQuery basItemQuery);
+    Integer updateBasItemStatusToOpen(Integer itemId);
+
 }

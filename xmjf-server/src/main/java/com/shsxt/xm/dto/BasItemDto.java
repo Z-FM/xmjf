@@ -8,6 +8,16 @@ import com.shsxt.xm.po.BasItem;
 public class BasItemDto extends BasItem{
     private Integer total;
 
+    public Long getSyTime() {
+        return syTime;
+    }
+
+    public void setSyTime(Long syTime) {
+        this.syTime = syTime;
+    }
+
+    private Long syTime;
+
     public Integer getTotal() {
         return total;
     }
