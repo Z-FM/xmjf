@@ -5,4 +5,6 @@ import com.shsxt.xm.po.BusAccount;
 
 public interface BusAccountDao extends BaseDao<BusAccount> {
 
+    public BusAccount queryBusAccountByUserId(Integer userId);
+
 }

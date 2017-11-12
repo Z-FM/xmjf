@@ -1,8 +1,8 @@
 package com.shsxt.xm.web.controller;
 
-import com.shsxt.xm.po.BasItem;
+import com.shsxt.xm.po.*;
 import com.shsxt.xm.query.BasItemQuery;
-import com.shsxt.xm.service.IBasItemService;
+import com.shsxt.xm.service.*;
 import com.shsxt.xm.utils.PageList;
 import com.shsxt.xm.web.model.ResultInfo;
 import org.springframework.stereotype.Controller;
@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * Created by GXR on 2017/11/9.
@@ -20,6 +22,14 @@ import javax.annotation.Resource;
 public class BasItemController extends  BaseController {
     @Resource
     private IBasItemService iBasItemService;
+    @Resource
+    private IBasUserSecurityService iBasUserSecurityService;
+    @Resource
+    private IBusItemLoanService iBusItemLoanService;
+    @Resource
+    private IBusAccountService iBusAccountService;
+    @Resource
+    private ISysPictureService iSysPictureService;
 
     @RequestMapping("basItemListPage")
     public  String toBasItemListPage(){
@@ -40,9 +50,22 @@ public class BasItemController extends  BaseController {
     }
 
     @RequestMapping("toBasItemDetailPage")
-    public String toBasItemDetailPage(Integer itemId, Model model){
+    public String toBasItemDetailPage(Integer itemId, Model model, HttpSession session){
         BasItem basItem = iBasItemService.queryBasItemById(itemId);
         model.addAttribute("item",basItem);
+        //获取贷款人id
+        Integer userId = basItem.getItemUserId();
+        BasUserSecurity basUserSecurity = iBasUserSecurityService.queryBasUserSecurityByUserId(userId);
+        model.addAttribute("loanUser",basUserSecurity);
+        BusItemLoan busItemLoan = iBusItemLoanService.queryBusItemLoanByItemId(itemId);
+        model.addAttribute("busItemLoan",busItemLoan);
+        BasUser basUser= (BasUser) session.getAttribute("user");
+        if(null!=basUser){
+            BusAccount busAccount= iBusAccountService.queryBusAccount(basUser.getId());
+            model.addAttribute("busAccount",busAccount);
+        }
+        List<SysPicture> sysPictures=iSysPictureService.querySysPicturesByItemId(itemId);
+        model.addAttribute("pics",sysPictures);
         return "item/details";
     }
 }

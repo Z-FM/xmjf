@@ -1,0 +1,40 @@
+package com.shsxt.xm.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+ * Created by lp on 2017/11/11.
+ */
+public class BusItemInvestDto {
+    private BigDecimal investAmount;
+    private String mobile;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    private Date addtime;
+
+    public BigDecimal getInvestAmount() {
+        return investAmount;
+    }
+
+    public void setInvestAmount(BigDecimal investAmount) {
+        this.investAmount = investAmount;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public Date getAddtime() {
+        return addtime;
+    }
+
+    public void setAddtime(Date addtime) {
+        this.addtime = addtime;
+    }
+}
