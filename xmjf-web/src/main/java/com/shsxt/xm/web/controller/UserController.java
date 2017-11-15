@@ -1,7 +1,9 @@
 package com.shsxt.xm.web.controller;
 
 import com.shsxt.xm.constant.P2pConstant;
+import com.shsxt.xm.exceptions.ParamsExcetion;
 import com.shsxt.xm.po.BasUser;
+import com.shsxt.xm.service.IBasUserSecurityService;
 import com.shsxt.xm.service.IBasUserService;
 import com.shsxt.xm.web.model.ResultInfo;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +25,8 @@ public class UserController extends BaseController{
 
     @Resource
     private IBasUserService iBasUserService;
+    @Resource
+    private IBasUserSecurityService iBasUserSecurityService;
 
     @RequestMapping("login")
     public String Login(HttpServletRequest request){
@@ -91,6 +95,55 @@ public class UserController extends BaseController{
     public  String exit(HttpSession session){
         session.removeAttribute("user");
         return "login";
+    }
+
+    /**
+     * 用户认证状态接口
+     * @param session
+     * @return
+     */
+    @RequestMapping("checkUserAuthStatus")
+    @ResponseBody
+    public  ResultInfo checkUserAuthStatus(HttpSession session){
+        BasUser basUser= (BasUser) session.getAttribute("user");
+        ResultInfo resultInfo=null;
+        try {
+            iBasUserSecurityService.checkUserAuthStatus(basUser.getId());
+            resultInfo=success("用户已认证!");
+        } catch (ParamsExcetion e) {
+            e.printStackTrace();
+            resultInfo=failed(e.getErrorMsg());
+        }catch (Exception e){
+            e.printStackTrace();
+            resultInfo=failed(P2pConstant.OP_FAILED_MSG);
+        }
+        return resultInfo;
+    }
+
+    /**
+     * 用户实名认证
+     * @param realName
+     * @param idCard
+     * @param payPassword
+     * @return
+     */
+    @RequestMapping("userAuth")
+    @ResponseBody
+    public  ResultInfo userAuth(String realName,String idCard,String payPassword,HttpSession session){
+        ResultInfo resultInfo=null;
+        BasUser basUser= (BasUser) session.getAttribute("user");
+        try {
+            iBasUserSecurityService.updateUserSecurityInfo(basUser.getId(),realName,idCard,payPassword);
+            resultInfo=success("认证成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultInfo=failed("认证失败!");
+        }
+        return resultInfo;
+    }
+    @RequestMapping("auth")
+    public  String toAuthPage(){
+        return "user/auth";
     }
 
 }

@@ -87,6 +87,11 @@ public class BasUserServiceImpl implements IBasUserService{
         return userLoginCheck(phone,password);
     }
 
+    @Override
+    public BasUser queryBasUserByUserId(Integer userId) {
+        return basUserDao.queryById(userId);
+    }
+
     /**
      * 用户密码登陆参数校验
      * @param phone
@@ -98,7 +103,7 @@ public class BasUserServiceImpl implements IBasUserService{
         BasUser basUser = queryBasUserByPhone(phone);
         AssertUtil.isTrue(null==basUser,"该用户不存在");
         AssertUtil.isTrue(basUser.getStatus()==0,"该用户已注销");
-        password=Md5Util.encode(password+basUser.getSalt());
+        password=MD5.toMD5(password+basUser.getSalt());
         AssertUtil.isTrue(!password.equals(basUser.getPassword()),"密码不正确");
         return basUser;
     }
@@ -204,7 +209,7 @@ public class BasUserServiceImpl implements IBasUserService{
         basUser.setType(1);
         basUser.setStatus(1);
         String salt= RandomCodesUtils.createRandom(false,4);
-        password= Md5Util.encode(password+salt);
+        password= MD5.toMD5(password+salt);
         basUser.setSalt(salt);
         basUser.setReferer("PC");
         basUser.setPassword(password);

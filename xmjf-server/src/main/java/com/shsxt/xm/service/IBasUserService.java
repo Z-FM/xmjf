@@ -13,4 +13,5 @@ public interface IBasUserService {
     public void saveBasUser(String phone, String password, String picVerifyCode,
                                String phoneVerifyCode, HttpSession session);
     public BasUser userLogin(String phone,String password);
+    public  BasUser queryBasUserByUserId(Integer userId);
 }

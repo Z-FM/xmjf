@@ -140,4 +140,10 @@
     from bas_user_security
     where user_id = #{userId}
   </select>
+  <select id="queryBasUserSecurityByCard"  resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"/>
+    from bas_user_security
+    where  identify_card= #{card}
+
+  </select>
 </mapper>

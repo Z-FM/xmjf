@@ -52,7 +52,7 @@
                 <div class="function">
                     <div class="function-center">
                         <div class="function-register">
-                            没有账号？<span><a style="color: #ff5e5e;cursor:pointer;" href="/register">免费注册</a></span>
+                            没有账号？<span><a style="color: #ff5e5e;cursor:pointer;" href="/user/register">免费注册</a></span>
                         </div>
 
                     </div>

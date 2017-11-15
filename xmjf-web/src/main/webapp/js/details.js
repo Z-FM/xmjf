@@ -203,3 +203,60 @@ function initNavigatePages(paginator) {
 function getCurrentPageData(pageNum) {
     loadInvestRecodesList($("#itemId").val(),pageNum);
 }
+
+/**
+ * 转到充值界面
+ */
+function  toRecharge() {
+    /**
+     * 1. 用户认证状态校验
+     *     调用认证接口
+     *  2.未认证
+     *     转到认证页面
+     *  3.已认证
+     *     转入充值界面
+     */
+    $.ajax({
+        type:"post",
+        url:ctx+"/user/checkUserAuthStatus",
+        dataType:"json",
+        success:function(data){
+            if(data.code==200){
+                window.location.href=ctx+"/account/recharge";
+            }else{
+                //询问框
+                layer.confirm('您还没有进行用户实名认证，请先进行实名认证再进行充值操作!', {
+                    btn: ['立即认证','稍后认证'] //按钮
+                }, function(){
+                    // 暂时转入账户信息设置页面
+                    window.location.href=ctx+"/account/setting"
+                }, function(){
+                    //alert("稍后认证处理。。。");
+                });
+            }
+        }
+    })
+}
+// 充值
+function toCharge() {
+    $.ajax({
+        type:"post",
+        url:ctx+"/user/checkUserAuthStatus",
+        dataType:"json",
+        success:function (data) {
+            if(data.code==200){
+                // 如果已认证  转至充值页面
+                window.location.href=ctx+"/account/recharge";
+            }else{
+                // 如果未认证  转至认证页面
+                layer.confirm('您还未进行实名认证,现在进行认真？',{
+                    btn: ['去认证','稍后认证'] //按钮
+                }, function(){
+                    window.location.href=ctx+"/user/auth";
+                }, function(){
+                });
+            }
+        }
+    })
+}
+

@@ -8,18 +8,18 @@
         <a href="/index?0?0" class="logo">
         </a>
         <div class="header_nav" id="indexNav">
-            <a href="/index?0?0">首页</a>
-            <a href="/item/investmentList?0?1">我要投资</a>
-            <a href="/security?0?2">安全保障</a>
-            <a href="/user/assets?0?3">我的账户</a>
-            <a href="/introduce?0?4">关于我们</a>
+            <a href="${ctx}/index">首页</a>
+            <a href="${ctx}/basItem/basItemListPage">我要投资</a>
+            <a href="${ctx}/security?0?2">安全保障</a>
+            <a href="${ctx}/user/assets?0?3">我的账户</a>
+            <a href="${ctx}/introduce?0?4">关于我们</a>
         </div>
         <div class="header_button">
             <#if user??>
                 <div id="hasUserId">
 
                     <div class='btn login' style="margin:36px auto 0; width: 164px;">
-                         <p>${basUser.mobile}<img style="margin:15px 0 0 5px;" src="/img/xl-icon.png" alt=""></p>
+                        <p>${user.mobile}<img style="margin:15px 0 0 5px;" src="/img/xl-icon.png" alt=""></p>
                     </div>
                     <div id="option" class="option display">
                         <div class="option-message">
