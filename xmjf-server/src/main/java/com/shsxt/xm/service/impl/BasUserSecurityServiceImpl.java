@@ -43,7 +43,7 @@ public class BasUserSecurityServiceImpl implements IBasUserSecurityService {
         AssertUtil.isTrue(StringUtils.isBlank(password),"支付密码不能为空");
         AssertUtil.isTrue(StringUtils.isBlank(card),"身份证号码不能为空");
         AssertUtil.isTrue(null==userId||null==iBasUserService.queryBasUserByUserId(userId),"用户未登录或用户不存在");
-        AssertUtil.isTrue(null!=basUserSecurityDao.queryBasUserSecurityByUserId(card),"身份证号已存在!");
+        AssertUtil.isTrue(null!=basUserSecurityDao.queryBasUserSecurityByCard(card),"身份证号已存在!");
         password= MD5.toMD5(password);
         BasUserSecurity basUserSecurity=basUserSecurityDao.queryBasUserSecurityByUserId(userId);
         basUserSecurity.setVerifyTime(new Date());

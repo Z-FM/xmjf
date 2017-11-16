@@ -6,5 +6,5 @@ import org.apache.ibatis.annotations.Param;
 
 public interface BasUserSecurityDao extends BaseDao<BasUserSecurity> {
     public BasUserSecurity queryBasUserSecurityByUserId(Integer userId);
-    public BasUserSecurity queryBasUserSecurityByUserId(@Param("card")String card);;
+    public BasUserSecurity queryBasUserSecurityByCard(@Param("card")String card);;
 }

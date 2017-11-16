@@ -64,5 +64,10 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
   </update>
+  <select id="queryBusUserInteGralByUserId" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List" />
+    FROM  bus_user_integral
+    WHERE user_id=#{userId}
+  </select>
 
 </mapper>
