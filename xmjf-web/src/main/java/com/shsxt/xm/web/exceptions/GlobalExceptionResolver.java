@@ -2,6 +2,7 @@ package com.shsxt.xm.web.exceptions;
 
 import com.alibaba.fastjson.JSON;
 import com.shsxt.xm.constant.P2pConstant;
+import com.shsxt.xm.exceptions.AuthExcetion;
 import com.shsxt.xm.exceptions.ParamsExcetion;
 import com.shsxt.xm.web.model.ResultInfo;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,11 @@ public class GlobalExceptionResolver implements HandlerExceptionResolver {
 			/**
 			 * 处理未登录情况
 			 */
-
+			if(ex instanceof AuthExcetion){
+				modelAndView.addObject("ctx", request.getContextPath());
+				modelAndView.setViewName("login");
+				return modelAndView;
+			}
 			
 			HandlerMethod handlerMethod=(HandlerMethod) handler;
 			Method method= handlerMethod.getMethod();

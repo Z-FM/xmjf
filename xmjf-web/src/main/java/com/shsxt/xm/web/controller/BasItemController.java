@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -30,6 +31,8 @@ public class BasItemController extends  BaseController {
     private IBusAccountService iBusAccountService;
     @Resource
     private ISysPictureService iSysPictureService;
+    @Resource
+    private IBusItemInvestService busItemInvestService;
 
     @RequestMapping("basItemListPage")
     public  String toBasItemListPage(){
@@ -67,5 +70,13 @@ public class BasItemController extends  BaseController {
         List<SysPicture> sysPictures=iSysPictureService.querySysPicturesByItemId(itemId);
         model.addAttribute("pics",sysPictures);
         return "item/details";
+    }
+
+    @RequestMapping("doInvest")
+    @ResponseBody
+    public ResultInfo doInvest(BigDecimal amount, Integer itemId, String password, HttpSession session){
+        BasUser basUser = (BasUser) session.getAttribute("user");
+        busItemInvestService.addBusItemInvest(amount,itemId,password,basUser.getId());
+        return success("投资成功");
     }
 }

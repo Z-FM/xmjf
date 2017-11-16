@@ -7,6 +7,8 @@ import com.shsxt.xm.db.dao.*;
 import com.shsxt.xm.dto.BusItemInvestDto;
 import com.shsxt.xm.po.*;
 import com.shsxt.xm.query.BusItemInvestQuery;
+import com.shsxt.xm.service.IBasUserSecurityService;
+import com.shsxt.xm.service.IBasUserService;
 import com.shsxt.xm.service.IBusItemInvestService;
 import com.shsxt.xm.utils.*;
 import org.apache.commons.lang3.StringUtils;
@@ -15,83 +17,114 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by GXR on 2017/11/12.
  */
 @Service
 public class BusItemInvestServiceImpl implements IBusItemInvestService {
+
     @Resource
     private BusItemInvestDao busItemInvestDao;
+
+
     @Resource
-    private BasUserDao basUserDao;
+    private IBasUserService basUserService;
+
     @Resource
-    private BasUserSecurityDao basUserSecurityDao;
+    private IBasUserSecurityService basUserSecurityService;
+
+
     @Resource
     private BasItemDao basItemDao;
+
     @Resource
     private BusUserStatDao busUserStatDao;
+
     @Resource
-    private BusAccountLogDao busAccountLogDao;
+    private BusUserIntegralDao userIntegralDao;
+
+
     @Resource
     private BusAccountDao busAccountDao;
+
     @Resource
-    private BusUserIntegralDao busUserIntegralDao;
+    private BusAccountLogDao busAccountLogDao;
     @Override
     public PageList queryBusItemsByParams(BusItemInvestQuery busItemInvestQuery) {
         PageHelper.startPage(busItemInvestQuery.getPageNum(),busItemInvestQuery.getPageSize());
-        List<BusItemInvestDto> busItemInvestDtos = busItemInvestDao.queryBusItemsByParams(busItemInvestQuery);
-        PageList pageList = new PageList(busItemInvestDtos);
+        List<BusItemInvestDto> busItemInvestDtos= busItemInvestDao.queryBusItemsByParams(busItemInvestQuery);
+        PageList pageList=new PageList(busItemInvestDtos);
         return pageList;
     }
 
     /**
-     *
-     * @param amount    投资金额
-     * @param itemId    项目id
-     * @param password  交易密码
-     * @param userId    用户id
+     * 执行投标 业务方法
+     * @param amount
+     * @param itemId
+     * @param password
+     * @param userId
      */
     @Override
     public void addBusItemInvest(BigDecimal amount, Integer itemId, String password, Integer userId) {
-        AssertUtil.isTrue(null==userId|| null==basUserDao.queryById(userId),"用户非法");
-        BasUserSecurity basUserSecurity = basUserSecurityDao.queryBasUserSecurityByUserId(userId);
+        AssertUtil.isTrue(null==userId||null==basUserService.queryBasUserByUserId(userId),"用户非法!");
+        BasUserSecurity basUserSecurity= basUserSecurityService.queryBasUserSecurityByUserId(userId);
         password= MD5.toMD5(password);
         AssertUtil.isTrue(StringUtils.isBlank(password),"交易密码非空!");
         AssertUtil.isTrue(!basUserSecurity.getPaymentPassword().equals(password),"交易密码不正确!");
-        AssertUtil.isTrue(null==itemId,"投资id非法");
-        BasItem basItem = basItemDao.queryById(itemId);
-        AssertUtil.isTrue(null==basItem,"投资项目不存在");
-        AssertUtil.isTrue(basItem.getMoveVip().equals(1),"移动项目，web不能进行操作");
-        AssertUtil.isTrue(!basItem.getItemStatus().equals(ItemStatus.OPEN),"项目为开放，不能进行投资");
-        BigDecimal syAmount = basItem.getItemAccount().add(basItem.getItemOngoingAccount().negate());
-        int result = syAmount.compareTo(BigDecimal.ZERO);
-        AssertUtil.isTrue(result<=0,"项目已满标");
-        AssertUtil.isTrue(amount.compareTo(BigDecimal.ZERO)<=0,"投资金额非法");
-        BigDecimal singleMinInvestAmount = basItem.getItemSingleMinInvestment();
+        AssertUtil.isTrue(null==itemId||itemId==0,"投标记录id非法!");
+        BasItem basItem= basItemDao.queryById(itemId);
+        AssertUtil.isTrue(null==basItem,"带投标的记录不存在!");
+        AssertUtil.isTrue(basItem.getMoveVip().equals(1),"移动端项目，web不能进行投资操作!");
+        AssertUtil.isTrue(!basItem.getItemStatus().equals(ItemStatus.OPEN),
+                "该项目处于未开放状态，暂时不能进行投资操作!");
+
+        BigDecimal syAmount=basItem.getItemAccount().add(basItem.getItemOngoingAccount().negate());
+        int result=syAmount.compareTo(BigDecimal.ZERO);
+        AssertUtil.isTrue(result<=0,"项目已满标，不可进行投资操作!");
+        AssertUtil.isTrue(amount.compareTo(BigDecimal.ZERO)<=0,"投资金额非法!");
+        BigDecimal singleMinInvestAmount=basItem.getItemSingleMinInvestment();
         if(singleMinInvestAmount.compareTo(BigDecimal.ZERO)>0){
-            AssertUtil.isTrue(amount.compareTo(singleMinInvestAmount)<0,"小于单笔最小投资金额");
+            AssertUtil.isTrue(amount.compareTo(singleMinInvestAmount)<0,"投资金额小于单笔投资最小金额!");
         }
-        BigDecimal singleMaxInvestAmount = basItem.getItemSingleMaxInvestment();
+        BigDecimal singleMaxInvestAmount=basItem.getItemSingleMaxInvestment();
         if(singleMaxInvestAmount.compareTo(BigDecimal.ZERO)>0){
+            //AssertUtil.isTrue(amount.compareTo(singleMaxInvestAmount));
             if(amount.compareTo(singleMaxInvestAmount)>0){
                 amount=singleMaxInvestAmount;
             }
         }
-        AssertUtil.isTrue(syAmount.compareTo(singleMinInvestAmount)<0,"项目截标");
-        if(amount.compareTo(singleMaxInvestAmount)<0&&amount.compareTo(singleMinInvestAmount)>0){
+        AssertUtil.isTrue(syAmount.compareTo(singleMinInvestAmount)<0,"项目处于截标阶段，不可进行投资操作!");
+        //  如果项目剩余金额在最小投资与最大投资之间 投资金额大于剩余金额
+        if(syAmount.compareTo(singleMinInvestAmount)>0&&syAmount.compareTo(singleMaxInvestAmount)<=0){
             if(amount.compareTo(syAmount)>0){
                 amount=syAmount;
             }
         }
-        int itemIsNew = (int)basItem.getItemIsnew();
+
+        int itemIsNew=(int)basItem.getItemIsnew();
         if(itemIsNew==1){
             BusUserStat busUserStat=busUserStatDao.queryBusUserStatByUserId(userId);
             AssertUtil.isTrue(busUserStat.getInvestCount()>0,"新手标不能重复投资!");
         }
         doInvest(amount,itemId,userId,basItem);
+    }
+
+    @Override
+    public Map<String, Object> queryItemInvestsFiveMonthByUserId(Integer userId) {
+        List<BusItemInvestDto> busItemInvestDtos= busItemInvestDao.queryItemInvestsFiveMonthByUserId(userId);
+        Map<String,Object> map=new HashMap<String,Object>();
+        map.put("code",200);
+        List<String> months=new ArrayList<String>();
+        List<BigDecimal> investAmounts=new ArrayList<BigDecimal>();
+        for(BusItemInvestDto busItemInvestDto:busItemInvestDtos){
+            months.add(busItemInvestDto.getMonth());
+            investAmounts.add(busItemInvestDto.getInvestAmount());
+        }
+        map.put("months",months);
+        map.put("amounts",investAmounts);
+        return map;
     }
 
     private void doInvest(BigDecimal amount, Integer itemId, Integer userId, BasItem basItem) {
@@ -122,11 +155,12 @@ public class BusItemInvestServiceImpl implements IBusItemInvestService {
         busItemInvest.setUpdatetime(new Date());
         busItemInvest.setUserId(userId);
         AssertUtil.isTrue(busItemInvestDao.insert(busItemInvest)<1, P2pConstant.OP_FAILED_MSG);
+
         // 积分更新
-        BusUserIntegral busUserIntegral=busUserIntegralDao.queryBusUserInteGralByUserId(userId);
+        BusUserIntegral busUserIntegral=userIntegralDao.queryBusUserInteGralByUserId(userId);
         busUserIntegral.setUsable(busUserIntegral.getUsable()+100);
         busUserIntegral.setTotal(busUserIntegral.getTotal()+100);
-        AssertUtil.isTrue(busUserIntegralDao.update(busUserIntegral)<1,P2pConstant.OP_FAILED_MSG);
+        AssertUtil.isTrue(userIntegralDao.update(busUserIntegral)<1,P2pConstant.OP_FAILED_MSG);
         // 更新用户统计信息
         BusUserStat busUserStat= busUserStatDao.queryBusUserStatByUserId(userId);
         busUserStat.setInvestCount(busUserStat.getInvestCount()+1);

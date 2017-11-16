@@ -1,6 +1,8 @@
 package com.shsxt.xm.utils;
 
 
+import com.shsxt.xm.constant.P2pConstant;
+import com.shsxt.xm.exceptions.AuthExcetion;
 import com.shsxt.xm.exceptions.ParamsExcetion;
 
 public class AssertUtil {
@@ -17,7 +19,11 @@ public class AssertUtil {
 			throw new ParamsExcetion(errorMsg,errorCode);
 		}
 	}
-	
 
+	public  static  void isLogin(Boolean flag,String errorMsg){
+		if(flag){
+			throw new AuthExcetion(errorMsg, P2pConstant.OP_FAILED_CODE);
+		}
+	}
 	
 }

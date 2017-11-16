@@ -1,6 +1,12 @@
 $(function () {
-    //渲染进度条
+    /**
+     * 渲染原型进度条
+     */
     initInvestJd();
+
+
+
+
     //tab切换
     $('#tabs div').click(function () {
         $(this).addClass('tab_active');
@@ -11,18 +17,24 @@ $(function () {
         if($(this).index()==2){
             /**
              * 获取项目投资记录
-             * ajax拼接tr
-             * 追加tr到recordList
+             *   ajax 拼接tr
+             *    追加tr 到 recordList
              */
             loadInvestRecodesList($("#itemId").val());
         }
     });
+    
+    
+
+    
+    
+
 });
 
 function initInvestJd() {
     var val=$("#rate").attr("data-val");
     radialIndicator.defaults.radius=40;
-    radialIndicator.defaults.barColor="#fcb22f";
+    radialIndicator.defaults.barColor="orange";
     radialIndicator.defaults.barWidth=10;
     radialIndicator.defaults.roundCorner=true;
     radialIndicator.defaults.percentage=true;
@@ -135,19 +147,19 @@ function  initTrHtml(list) {
      *  <tr><td>135xxxx5698&nbsp;&nbsp;
      </td><td>1000</td><td>2017-10-31</td></tr>
      */
-    if(null!=list&&list.length>0){
-        var trs="";
-        for(var i=0;i<list.length;i++){
-            trs=trs+"<tr>";
-            var tempData=list[i];
-            trs=trs+"<td>" +tempData.mobile+"&nbsp;&nbsp;</td>" +
-                "<td>"+tempData.investAmount+"</td>" +
-                "<td>"+tempData.addtime+"</td>";
-            trs=trs+"</tr>";
-        }
-        console.log(trs);
-        $("#recordList").html(trs);
-    }
+      if(null!=list&&list.length>0){
+          var trs="";
+          for(var i=0;i<list.length;i++){
+              trs=trs+"<tr>";
+              var tempData=list[i];
+              trs=trs+"<td>" +tempData.mobile+"&nbsp;&nbsp;</td>" +
+                  "<td>"+tempData.investAmount+"</td>" +
+                  "<td>"+tempData.addtime+"</td>";
+              trs=trs+"</tr>";
+          }
+          console.log(trs);
+          $("#recordList").html(trs);
+      }
 }
 
 function initNavigatePages(paginator) {
@@ -204,6 +216,7 @@ function getCurrentPageData(pageNum) {
     loadInvestRecodesList($("#itemId").val(),pageNum);
 }
 
+
 /**
  * 转到充值界面
  */
@@ -221,40 +234,97 @@ function  toRecharge() {
         url:ctx+"/user/checkUserAuthStatus",
         dataType:"json",
         success:function(data){
-            if(data.code==200){
-                window.location.href=ctx+"/account/recharge";
-            }else{
-                //询问框
-                layer.confirm('您还没有进行用户实名认证，请先进行实名认证再进行充值操作!', {
-                    btn: ['立即认证','稍后认证'] //按钮
-                }, function(){
+             if(data.code==200){
+                //alert("用户已认证!");
+                 window.location.href=ctx+"/account/rechargePage";
+             }else{
+                 //询问框
+                 layer.confirm('您还没有进行用户实名认证，请先进行实名认证再进行充值操作!', {
+                     btn: ['立即认证','稍后认证'] //按钮
+                 }, function(){
                     // 暂时转入账户信息设置页面
-                    window.location.href=ctx+"/account/setting"
-                }, function(){
+                     window.location.href=ctx+"/account/setting"
+                 }, function(){
                     //alert("稍后认证处理。。。");
-                });
-            }
+                 });
+             }
         }
+
+
     })
+
+
+
 }
-// 充值
-function toCharge() {
+
+
+function doInvest() {
+    //alert(123);
+     var itemId=$("#itemId").val();
+     //
+     var usableMoney=$("#usableMoney").val();
+     if(isEmpty(itemId)){
+     layer.tips("交易项目记录不存在!","#investFinal");
+     return;
+     }
+     if(isEmpty(usableMoney)){
+     layer.tips("投资金额不能为空!","#usableMoney");
+     return;
+     }
+     usableMoney=parseInt(usableMoney);
+
+     // 获取起投金额  最大投标金额
+    var minInvestMoney=$("#minInvestMoney").attr("data-value");
+     var  maxInvestMoney=$("#maxInvestMoney").attr("data-value");
+    // console.log(minInvestMoney);
+
+     if(!isEmpty(minInvestMoney)){
+          minInvestMoney=parseInt(minInvestMoney);
+         if(usableMoney<minInvestMoney){
+         layer.tips("起投资金不能小于最小投资金额!","#usableMoney");
+         return;
+         }
+     }
+
+     if(!isEmpty(maxInvestMoney)){
+         maxInvestMoney=parseInt(maxInvestMoney);
+         if(usableMoney>maxInvestMoney){
+             layer.tips("起投资金不能大于最大投资金额!","#usableMoney");
+             return;
+         }
+     }
+
+     // 余额
+     var ye=$("#ye").attr("data-value");
+     ye=parseInt(ye);
+     if(usableMoney>ye){
+     layer.tips("投资资金不能大于账户余额!","#usableMoney");
+     return;
+     }
+
+     var password="";
+    layer.prompt({title: '请输入交易密码', formType: 1}, function(pass, index){
+        layer.close(index);
+        //layer.msg(pass);
+        todoInvest(itemId,usableMoney,pass);
+    });
+}
+
+function  todoInvest(itemId,amount,password) {
     $.ajax({
         type:"post",
-        url:ctx+"/user/checkUserAuthStatus",
+        url:ctx+"/basItem/doInvest",
+        data:{
+            itemId:itemId,
+            amount:amount,
+            password:password
+        },
         dataType:"json",
         success:function (data) {
             if(data.code==200){
-                // 如果已认证  转至充值页面
-                window.location.href=ctx+"/account/recharge";
+                layer.msg("项目投标成功!");
             }else{
-                // 如果未认证  转至认证页面
-                layer.confirm('您还未进行实名认证,现在进行认真？',{
-                    btn: ['去认证','稍后认证'] //按钮
-                }, function(){
-                    window.location.href=ctx+"/user/auth";
-                }, function(){
-                });
+                layer.msg(data.msg);
             }
         }
     })

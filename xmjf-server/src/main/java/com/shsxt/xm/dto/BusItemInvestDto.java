@@ -13,6 +13,15 @@ public class BusItemInvestDto {
     private String mobile;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     private Date addtime;
+    private String month;
+
+    public String getMonth() {
+        return month;
+    }
+
+    public void setMonth(String mounth) {
+        this.month = mounth;
+    }
 
     public BigDecimal getInvestAmount() {
         return investAmount;

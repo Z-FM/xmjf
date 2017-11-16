@@ -1,6 +1,7 @@
 package com.shsxt.xm.web.controller;
 
 import com.shsxt.xm.constant.P2pConstant;
+import com.shsxt.xm.dto.BusAccountDto;
 import com.shsxt.xm.dto.CallBackDto;
 import com.shsxt.xm.dto.PayDto;
 import com.shsxt.xm.exceptions.ParamsExcetion;
@@ -10,7 +11,9 @@ import com.shsxt.xm.po.BusAccountRecharge;
 import com.shsxt.xm.query.BusAccountRechargeQuery;
 import com.shsxt.xm.service.IBasUserSecurityService;
 import com.shsxt.xm.service.IBusAccountRechargeService;
+import com.shsxt.xm.service.IBusAccountService;
 import com.shsxt.xm.utils.PageList;
+import com.shsxt.xm.web.annotations.IsLogin;
 import com.shsxt.xm.web.model.ResultInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -35,9 +38,11 @@ public class BusAccountRechargeController extends  BaseController {
 
     @Resource
     private IBasUserSecurityService basUserSecurityService;
+    @Resource
+    private IBusAccountService iBusAccountService;
 
 
-
+    @IsLogin
     @RequestMapping("setting")
     public  String toSettingPage(HttpSession session,Model model){
         BasUser basUser= (BasUser) session.getAttribute("user");
@@ -50,7 +55,8 @@ public class BusAccountRechargeController extends  BaseController {
      * 转至充值页面
      * @return
      */
-    @RequestMapping("recharge")
+    @IsLogin
+    @RequestMapping("rechargePage")
     public  String recharge(){
         return "user/recharge";
     }
@@ -97,6 +103,7 @@ public class BusAccountRechargeController extends  BaseController {
         busAccountRechargeService.updateBusAccountRecharge(callBackDto,basUser.getId());
         return "user/recharge_record";
     }
+    @IsLogin
     @RequestMapping("rechargeRecord")
     public  String toRechargeRecord(){
         return "user/recharge_record";
@@ -108,6 +115,7 @@ public class BusAccountRechargeController extends  BaseController {
         busAccountRechargeQuery.setUserId(basUser.getId());
         return busAccountRechargeService.queryBusAccountRechargeLisrByParams(busAccountRechargeQuery);
     }
+    @IsLogin
     @RequestMapping("auth")
     public  String toAuthPage(){
         return "user/auth";
@@ -118,5 +126,17 @@ public class BusAccountRechargeController extends  BaseController {
         BasUser basUser= (BasUser) session.getAttribute("user");
         basUserSecurityService.updateBasUserSecurityStatus(realName,card,password,basUser.getId());
         return success("用户认证成功!");
+    }
+    @RequestMapping("queryAccountInfoByUserId")
+    @ResponseBody
+    public BusAccountDto queryAccountInfoByUserId(HttpSession session){
+        BasUser basUser= (BasUser) session.getAttribute("user");
+        return iBusAccountService.queryBusAccountInfoByUserId(basUser.getId());
+    }
+
+    @IsLogin
+    @RequestMapping("accountInfo")
+    public  String toAccountInfoPage(){
+        return "user/account_info";
     }
 }

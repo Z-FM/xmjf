@@ -4,32 +4,38 @@
   <resultMap id="BaseResultMap" type="com.shsxt.xm.po.BusItemInvest">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="picture_url" jdbcType="VARCHAR" property="pictureUrl" />
-    <result column="picture_path" jdbcType="VARCHAR" property="picturePath" />
-    <result column="picture_name" jdbcType="VARCHAR" property="pictureName" />
-    <result column="picture_type" jdbcType="INTEGER" property="pictureType" />
-    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="invest_type" jdbcType="INTEGER" property="investType" />
+    <result column="invest_current" jdbcType="INTEGER" property="investCurrent" />
+    <result column="invest_order" jdbcType="VARCHAR" property="investOrder" />
+    <result column="invest_status" jdbcType="INTEGER" property="investStatus" />
+    <result column="invest_amount" jdbcType="DECIMAL" property="investAmount" />
+    <result column="invest_deal_amount" jdbcType="DECIMAL" property="investDealAmount" />
+    <result column="collect_amount" jdbcType="DECIMAL" property="collectAmount" />
+    <result column="collect_principal" jdbcType="DECIMAL" property="collectPrincipal" />
+    <result column="collect_interest" jdbcType="DECIMAL" property="collectInterest" />
+    <result column="actual_collect_amount" jdbcType="DECIMAL" property="actualCollectAmount" />
+    <result column="actual_collect_principal" jdbcType="DECIMAL" property="actualCollectPrincipal" />
+    <result column="actual_collect_interest" jdbcType="DECIMAL" property="actualCollectInterest" />
+    <result column="actual_uncollect_amount" jdbcType="DECIMAL" property="actualUncollectAmount" />
+    <result column="actual_uncollect_principal" jdbcType="DECIMAL" property="actualUncollectPrincipal" />
+    <result column="actual_uncollect_interest" jdbcType="DECIMAL" property="actualUncollectInterest" />
+    <result column="additional_rate_amount" jdbcType="DECIMAL" property="additionalRateAmount" />
     <result column="addip" jdbcType="VARCHAR" property="addip" />
-    <result column="item_picture_type" jdbcType="INTEGER" property="itemPictureType" />
-    <result column="sequence" jdbcType="INTEGER" property="sequence" />
+    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="updatetime" jdbcType="TIMESTAMP" property="updatetime" />
+    <result column="special_marks" jdbcType="VARCHAR" property="specialMarks" />
+    <result column="auto_id" jdbcType="INTEGER" property="autoId" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, item_id, number, borrower, id_card, mobile, car_brand, car_demio, car_type, car_color, 
-    buy_time, buy_price, kilometers, assess_price, licensing_time, is_new_car, first_pay_amount
+    id, item_id, user_id, invest_type, invest_current, invest_order, invest_status, invest_amount,
+    invest_deal_amount, collect_amount, collect_principal, collect_interest, actual_collect_amount,
+    actual_collect_principal, actual_collect_interest, actual_uncollect_amount, actual_uncollect_principal,
+    actual_uncollect_interest, additional_rate_amount, addip, addtime, updatetime, special_marks,
+    auto_id
   </sql>
-  <select id="queryById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from bus_item_loan
-    where id = #{id,jdbcType=INTEGER}
-  </select>
-  <delete id="delete" parameterType="java.lang.Integer">
-    delete from bus_item_loan
-    where id = #{id,jdbcType=INTEGER}
-  </delete>
-
   <insert id="insert" parameterType="com.shsxt.xm.po.BusItemInvest">
-    insert into bus_item_loan
+    insert into bus_item_invest
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
         id,
@@ -37,50 +43,71 @@
       <if test="itemId != null">
         item_id,
       </if>
-      <if test="number != null">
-        number,
+      <if test="userId != null">
+        user_id,
       </if>
-      <if test="borrower != null">
-        borrower,
+      <if test="investType != null">
+        invest_type,
       </if>
-      <if test="idCard != null">
-        id_card,
+      <if test="investCurrent != null">
+        invest_current,
       </if>
-      <if test="mobile != null">
-        mobile,
+      <if test="investOrder != null">
+        invest_order,
       </if>
-      <if test="carBrand != null">
-        car_brand,
+      <if test="investStatus != null">
+        invest_status,
       </if>
-      <if test="carDemio != null">
-        car_demio,
+      <if test="investAmount != null">
+        invest_amount,
       </if>
-      <if test="carType != null">
-        car_type,
+      <if test="investDealAmount != null">
+        invest_deal_amount,
       </if>
-      <if test="carColor != null">
-        car_color,
+      <if test="collectAmount != null">
+        collect_amount,
       </if>
-      <if test="buyTime != null">
-        buy_time,
+      <if test="collectPrincipal != null">
+        collect_principal,
       </if>
-      <if test="buyPrice != null">
-        buy_price,
+      <if test="collectInterest != null">
+        collect_interest,
       </if>
-      <if test="kilometers != null">
-        kilometers,
+      <if test="actualCollectAmount != null">
+        actual_collect_amount,
       </if>
-      <if test="assessPrice != null">
-        assess_price,
+      <if test="actualCollectPrincipal != null">
+        actual_collect_principal,
       </if>
-      <if test="licensingTime != null">
-        licensing_time,
+      <if test="actualCollectInterest != null">
+        actual_collect_interest,
       </if>
-      <if test="isNewCar != null">
-        is_new_car,
+      <if test="actualUncollectAmount != null">
+        actual_uncollect_amount,
       </if>
-      <if test="firstPayAmount != null">
-        first_pay_amount,
+      <if test="actualUncollectPrincipal != null">
+        actual_uncollect_principal,
+      </if>
+      <if test="actualUncollectInterest != null">
+        actual_uncollect_interest,
+      </if>
+      <if test="additionalRateAmount != null">
+        additional_rate_amount,
+      </if>
+      <if test="addip != null">
+        addip,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+      <if test="updatetime != null">
+        updatetime,
+      </if>
+      <if test="specialMarks != null">
+        special_marks,
+      </if>
+      <if test="autoId != null">
+        auto_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -90,116 +117,136 @@
       <if test="itemId != null">
         #{itemId,jdbcType=INTEGER},
       </if>
-      <if test="number != null">
-        #{number,jdbcType=VARCHAR},
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
       </if>
-      <if test="borrower != null">
-        #{borrower,jdbcType=VARCHAR},
+      <if test="investType != null">
+        #{investType,jdbcType=INTEGER},
       </if>
-      <if test="idCard != null">
-        #{idCard,jdbcType=VARCHAR},
+      <if test="investCurrent != null">
+        #{investCurrent,jdbcType=INTEGER},
       </if>
-      <if test="mobile != null">
-        #{mobile,jdbcType=VARCHAR},
+      <if test="investOrder != null">
+        #{investOrder,jdbcType=VARCHAR},
       </if>
-      <if test="carBrand != null">
-        #{carBrand,jdbcType=VARCHAR},
+      <if test="investStatus != null">
+        #{investStatus,jdbcType=INTEGER},
       </if>
-      <if test="carDemio != null">
-        #{carDemio,jdbcType=VARCHAR},
+      <if test="investAmount != null">
+        #{investAmount,jdbcType=DECIMAL},
       </if>
-      <if test="carType != null">
-        #{carType,jdbcType=VARCHAR},
+      <if test="investDealAmount != null">
+        #{investDealAmount,jdbcType=DECIMAL},
       </if>
-      <if test="carColor != null">
-        #{carColor,jdbcType=VARCHAR},
+      <if test="collectAmount != null">
+        #{collectAmount,jdbcType=DECIMAL},
       </if>
-      <if test="buyTime != null">
-        #{buyTime,jdbcType=VARCHAR},
+      <if test="collectPrincipal != null">
+        #{collectPrincipal,jdbcType=DECIMAL},
       </if>
-      <if test="buyPrice != null">
-        #{buyPrice,jdbcType=VARCHAR},
+      <if test="collectInterest != null">
+        #{collectInterest,jdbcType=DECIMAL},
       </if>
-      <if test="kilometers != null">
-        #{kilometers,jdbcType=VARCHAR},
+      <if test="actualCollectAmount != null">
+        #{actualCollectAmount,jdbcType=DECIMAL},
       </if>
-      <if test="assessPrice != null">
-        #{assessPrice,jdbcType=VARCHAR},
+      <if test="actualCollectPrincipal != null">
+        #{actualCollectPrincipal,jdbcType=DECIMAL},
       </if>
-      <if test="licensingTime != null">
-        #{licensingTime,jdbcType=TIMESTAMP},
+      <if test="actualCollectInterest != null">
+        #{actualCollectInterest,jdbcType=DECIMAL},
       </if>
-      <if test="isNewCar != null">
-        #{isNewCar,jdbcType=INTEGER},
+      <if test="actualUncollectAmount != null">
+        #{actualUncollectAmount,jdbcType=DECIMAL},
       </if>
-      <if test="firstPayAmount != null">
-        #{firstPayAmount,jdbcType=DECIMAL},
+      <if test="actualUncollectPrincipal != null">
+        #{actualUncollectPrincipal,jdbcType=DECIMAL},
+      </if>
+      <if test="actualUncollectInterest != null">
+        #{actualUncollectInterest,jdbcType=DECIMAL},
+      </if>
+      <if test="additionalRateAmount != null">
+        #{additionalRateAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="addip != null">
+        #{addip,jdbcType=VARCHAR},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatetime != null">
+        #{updatetime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="specialMarks != null">
+        #{specialMarks,jdbcType=VARCHAR},
+      </if>
+      <if test="autoId != null">
+        #{autoId,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
-  <update id="update" parameterType="com.shsxt.xm.po.BusItemInvest">
-    update bus_item_loan
-    <set>
-      <if test="itemId != null">
-        item_id = #{itemId,jdbcType=INTEGER},
-      </if>
-      <if test="number != null">
-        number = #{number,jdbcType=VARCHAR},
-      </if>
-      <if test="borrower != null">
-        borrower = #{borrower,jdbcType=VARCHAR},
-      </if>
-      <if test="idCard != null">
-        id_card = #{idCard,jdbcType=VARCHAR},
-      </if>
-      <if test="mobile != null">
-        mobile = #{mobile,jdbcType=VARCHAR},
-      </if>
-      <if test="carBrand != null">
-        car_brand = #{carBrand,jdbcType=VARCHAR},
-      </if>
-      <if test="carDemio != null">
-        car_demio = #{carDemio,jdbcType=VARCHAR},
-      </if>
-      <if test="carType != null">
-        car_type = #{carType,jdbcType=VARCHAR},
-      </if>
-      <if test="carColor != null">
-        car_color = #{carColor,jdbcType=VARCHAR},
-      </if>
-      <if test="buyTime != null">
-        buy_time = #{buyTime,jdbcType=VARCHAR},
-      </if>
-      <if test="buyPrice != null">
-        buy_price = #{buyPrice,jdbcType=VARCHAR},
-      </if>
-      <if test="kilometers != null">
-        kilometers = #{kilometers,jdbcType=VARCHAR},
-      </if>
-      <if test="assessPrice != null">
-        assess_price = #{assessPrice,jdbcType=VARCHAR},
-      </if>
-      <if test="licensingTime != null">
-        licensing_time = #{licensingTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="isNewCar != null">
-        is_new_car = #{isNewCar,jdbcType=INTEGER},
-      </if>
-      <if test="firstPayAmount != null">
-        first_pay_amount = #{firstPayAmount,jdbcType=DECIMAL},
-      </if>
-    </set>
+  <select id="queryById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from bus_item_invest
     where id = #{id,jdbcType=INTEGER}
-  </update>
+  </select>
   <select id="queryBusItemsByParams" parameterType="busItemInvestQuery" resultType="busItemInvestDto">
-      SELECT
-                  bii.invest_amount as investAmount,
-                  bii.addtime,
-                  u.mobile
-              FROM
-                  bus_item_invest bii
-              LEFT JOIN bas_user u ON bii.user_id = u.id
-              WHERE
-                  bii.item_id = #{itemId}
+    SELECT
+    bii.invest_amount as investAmount,
+    bii.addtime,
+    u.mobile
+    FROM
+    bus_item_invest bii
+    LEFT JOIN bas_user u ON bii.user_id = u.id
+    WHERE
+    bii.item_id = #{itemId}
+  </select>
+  <select id="queryItemInvestsFiveMonthByUserId" resultType="BusItemInvestDto">
+    SELECT
+        temp. MONTH AS MONTH,
+        IFNULL(invest.investAmount, 0) AS investAmount
+    FROM
+        (
+            SELECT
+                DATE_FORMAT(CURDATE(), '%Y-%m') AS MONTH
+            UNION
+                SELECT
+                    DATE_FORMAT(
+                        (CURDATE() - INTERVAL 1 MONTH),
+                        '%Y-%m'
+                    ) AS MONTH
+                UNION
+                    SELECT
+                        DATE_FORMAT(
+                            (CURDATE() - INTERVAL 2 MONTH),
+                            '%Y-%m'
+                        ) AS MONTH
+                    UNION
+                        SELECT
+                            DATE_FORMAT(
+                                (CURDATE() - INTERVAL 3 MONTH),
+                                '%Y-%m'
+                            ) AS MONTH
+                        UNION
+                            SELECT
+                                DATE_FORMAT(
+                                    (CURDATE() - INTERVAL 4 MONTH),
+                                    '%Y-%m'
+                                ) AS MONTH
+        ) temp
+    LEFT JOIN (
+        SELECT
+            DATE_FORMAT(addtime, '%Y-%m') AS MONTH,
+            SUM(invest_amount) AS investAmount
+        FROM
+            bus_item_invest
+        WHERE
+            user_id = #{userId}
+        GROUP BY
+            DATE_FORMAT(addtime, '%Y-%m')
+    ) invest ON temp.`month` = invest. MONTH
+    ORDER BY
+        temp. MONTH
   </select>
 </mapper>

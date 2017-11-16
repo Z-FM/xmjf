@@ -4,106 +4,38 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class BusItemLoan {
-    /**
-     * id
-     * 
-     */
     private Integer id;
 
-    /**
-     * item_id
-     * 项目ID
-     */
     private Integer itemId;
 
-    /**
-     * number
-     * 借款人编号
-     */
     private String number;
 
-    /**
-     * borrower
-     * 借款人
-     */
     private String borrower;
 
-    /**
-     * id_card
-     * 身份证号码
-     */
     private String idCard;
 
-    /**
-     * mobile
-     * 手机号码
-     */
     private String mobile;
 
-    /**
-     * car_brand
-     * 车辆品牌
-     */
     private String carBrand;
 
-    /**
-     * car_demio
-     * 车系
-     */
     private String carDemio;
 
-    /**
-     * car_type
-     * 车型
-     */
     private String carType;
 
-    /**
-     * car_color
-     * 车辆颜色
-     */
     private String carColor;
 
-    /**
-     * buy_time
-     * 购买时间
-     */
     private String buyTime;
 
-    /**
-     * buy_price
-     * 购买价格
-     */
     private String buyPrice;
 
-    /**
-     * kilometers
-     * 行驶公里数
-     */
     private String kilometers;
 
-    /**
-     * assess_price
-     * 评估价格
-     */
     private String assessPrice;
 
-    /**
-     * licensing_time
-     * 上牌时间
-     */
     private Date licensingTime;
 
-    /**
-     * is_new_car
-     * 是否是新车
-     */
     private Integer isNewCar;
 
-    /**
-     * first_pay_amount
-     * 首付金额
-     */
     private BigDecimal firstPayAmount;
 
     public Integer getId() {
@@ -127,7 +59,7 @@ public class BusItemLoan {
     }
 
     public void setNumber(String number) {
-        this.number = number;
+        this.number = number == null ? null : number.trim();
     }
 
     public String getBorrower() {
@@ -135,7 +67,7 @@ public class BusItemLoan {
     }
 
     public void setBorrower(String borrower) {
-        this.borrower = borrower;
+        this.borrower = borrower == null ? null : borrower.trim();
     }
 
     public String getIdCard() {
@@ -143,7 +75,7 @@ public class BusItemLoan {
     }
 
     public void setIdCard(String idCard) {
-        this.idCard = idCard;
+        this.idCard = idCard == null ? null : idCard.trim();
     }
 
     public String getMobile() {
@@ -151,7 +83,7 @@ public class BusItemLoan {
     }
 
     public void setMobile(String mobile) {
-        this.mobile = mobile;
+        this.mobile = mobile == null ? null : mobile.trim();
     }
 
     public String getCarBrand() {
@@ -159,7 +91,7 @@ public class BusItemLoan {
     }
 
     public void setCarBrand(String carBrand) {
-        this.carBrand = carBrand;
+        this.carBrand = carBrand == null ? null : carBrand.trim();
     }
 
     public String getCarDemio() {
@@ -167,7 +99,7 @@ public class BusItemLoan {
     }
 
     public void setCarDemio(String carDemio) {
-        this.carDemio = carDemio;
+        this.carDemio = carDemio == null ? null : carDemio.trim();
     }
 
     public String getCarType() {
@@ -175,7 +107,7 @@ public class BusItemLoan {
     }
 
     public void setCarType(String carType) {
-        this.carType = carType;
+        this.carType = carType == null ? null : carType.trim();
     }
 
     public String getCarColor() {
@@ -183,7 +115,7 @@ public class BusItemLoan {
     }
 
     public void setCarColor(String carColor) {
-        this.carColor = carColor;
+        this.carColor = carColor == null ? null : carColor.trim();
     }
 
     public String getBuyTime() {
@@ -191,7 +123,7 @@ public class BusItemLoan {
     }
 
     public void setBuyTime(String buyTime) {
-        this.buyTime = buyTime;
+        this.buyTime = buyTime == null ? null : buyTime.trim();
     }
 
     public String getBuyPrice() {
@@ -199,7 +131,7 @@ public class BusItemLoan {
     }
 
     public void setBuyPrice(String buyPrice) {
-        this.buyPrice = buyPrice;
+        this.buyPrice = buyPrice == null ? null : buyPrice.trim();
     }
 
     public String getKilometers() {
@@ -207,7 +139,7 @@ public class BusItemLoan {
     }
 
     public void setKilometers(String kilometers) {
-        this.kilometers = kilometers;
+        this.kilometers = kilometers == null ? null : kilometers.trim();
     }
 
     public String getAssessPrice() {
@@ -215,7 +147,7 @@ public class BusItemLoan {
     }
 
     public void setAssessPrice(String assessPrice) {
-        this.assessPrice = assessPrice;
+        this.assessPrice = assessPrice == null ? null : assessPrice.trim();
     }
 
     public Date getLicensingTime() {

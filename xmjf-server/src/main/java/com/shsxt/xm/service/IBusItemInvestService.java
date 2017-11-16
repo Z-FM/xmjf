@@ -4,6 +4,7 @@ import com.shsxt.xm.query.BusItemInvestQuery;
 import com.shsxt.xm.utils.PageList;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 /**
  * Created by GXR on 2017/11/12.
@@ -11,4 +12,5 @@ import java.math.BigDecimal;
 public interface IBusItemInvestService {
     public PageList queryBusItemsByParams(BusItemInvestQuery busItemInvestQuery);
     public void addBusItemInvest(BigDecimal amount, Integer itemId, String password, Integer userId);
+    public Map<String, Object> queryItemInvestsFiveMonthByUserId(Integer userId);
 }

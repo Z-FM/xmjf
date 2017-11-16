@@ -21,7 +21,7 @@
 </head>
 
 <body>
-
+<input type="hidden" value="${item.id?c}" id="itemId"/>
 <#include "../include/header.ftl">
 <div class="invest_container">
     <div class="invest_item">
@@ -91,10 +91,9 @@
                     </td>
                     <td width="76">起投金额</td>
                     <td width="154">
-                        <em id="minInvestMoney">
+                        <em id="minInvestMoney" data-value=${item.itemSingleMinInvestment}>
                             <#if item.itemSingleMinInvestment??>
                                    ${item.itemSingleMinInvestment}元
-
                               <#else >
                                  无限制
                             </#if>
@@ -102,7 +101,7 @@
                     </td>
                     <td width="76">最大投标</td>
                     <td width="77">
-                        <em id="maxInvestMoney">
+                        <em id="maxInvestMoney" data-value=${item.itemSingleMaxInvestment?c}>
                         <#if item.itemSingleMaxInvestment??>
                                 ${item.itemSingleMaxInvestment}元
                             <#else>
@@ -141,7 +140,7 @@
         <div class="invest_panel">
             <p class="text">剩余金额：${item.itemAccount-item.itemOngoingAccount}元</p>
              <#if user??>
-                 <p class="text left_account"><span>账户余额：${busAccount.usable}元</span>
+                 <p class="text left_account"><span id="ye" data-value=${busAccount.usable?c}>账户余额：${busAccount.usable}元</span>
                  <a class="charge" href="javascript:toRecharge()">充值</a>
                  </p>
              </#if>
@@ -153,7 +152,7 @@
                      <#if item.itemStatus ==1>
                          <a href="javascript:void(0)"><input class='invest_button fl' style="background: #c9c9c9;cursor: default" type="button"  value="即将开放"></a>
                         <#elseif  item.itemStatus==10>
-                            <a href=""><input class='invest_button fl'  type="button"  value="立即投资"></a>
+                            <a href="javascript:void(0)"><input class='invest_button fl'  onclick="doInvest()" type="button"  value="立即投资"></a>
                         <#elseif item.itemStatus==20>
                          <a href="javascript:void(0)"><input class='invest_button fl' style="background: #c9c9c9;cursor: default" type="button"  value="已抢完"></a>
                         <#elseif  item.itemStatus==30 || item.itemStatus==31 >
@@ -170,7 +169,7 @@
                      <a href="/login"><input class='invest_button fl' type="button" value="请登录"></a>
                 </#if>
 
-                <span class="caculator fl"></span>
+                <#--<span class="caculator fl"></span>-->
             </p>
             <p class="no_account">没有账号？<a href="/register">立即注册</a></p>
         </div>
@@ -361,94 +360,5 @@
     </div>
 </div>
 
-
-
-<#--立即投资,无需充值-->
-<div class="bg_panel" style="display: none" id="couponPanel">
-    <div class="panel">
-        <div class="close"></div>
-        <div class="total"><span class="fl" id="">投资总额&nbsp;&nbsp;<em id="investAccountTotal"></em><em id="couponAmount" style="color:#ff5757"></em></span><span class="fr">
-            预期收益&nbsp;&nbsp;<em id="itemIncome"></em>
-            <em style="color:#ff5757" id="couponIncome"></em>
-        </span></div>
-        <div id='hasCoupon' class="coupon"><label>
-            <input id='couponCheck' type="checkbox" checked>&nbsp;&nbsp;红&nbsp;&nbsp;&nbsp;&nbsp;包</label>
-            <select name="selectCoupon" id="selectCoupon">
-
-            </select>
-        </div>
-        <div id='hasNoCoupon' class="coupon"><label><input disabled type="checkbox">&nbsp;&nbsp;红&nbsp;&nbsp;&nbsp;&nbsp;包</label><span>暂无红包可使用，点击<a href="/user/reward?1?3">查看</a></span></div>
-        <div id='hasticket' class="coupon"><label>
-            <input  type="checkbox" id="tiketCheck" checked>&nbsp;&nbsp;加息券</label>
-            <select name="selectTiket" id="selectTiket">
-
-            </select>
-        </div>
-        <div id='hasNoticket' class="coupon"><label><input disabled type="checkbox">&nbsp;&nbsp;加息券</label><span>暂无加息券可使用，点击<a href="/user/reward?1?3">查看</a></span></div>
-    <#--<div><input type="password" placeholder="请输入6位交易密码"><a href="">忘记交易密码</a></div>-->
-        <div class="invest"><input type="button" value="立即投资" id="investFinal"></div>
-        <div class="agreement"><label for=""><input checked type="checkbox" id="agreement">&nbsp;&nbsp;我同意<a style="color: #5F5F5F !important;" href="/html/investxy.html" target="_blank">《投资协议》</a></label></div>
-    </div>
-</div>
-
-<#--立即投资,需充值-->
-<div class="bg_panel" style="display: none" id="needRecharge">
-    <div class="panel">
-        <div class="close"></div>
-        <div class="tips">当前账户余额不足，是否前去<strong>充值</strong>？</div>
-        <div class="confirm" >
-            <input  style='cursor: pointer;' id="rechargeCancle"  class='no' type="button" value="取消">
-            <a href="/account/recharge/recharge?-1?3?0"><input id='doRecharge' class='yes' type="button" value="确定"></a>
-        </div>
-    </div>
-</div>
-
-<#--收益计算器-->
-<div class="bg_panel" style="display: none" id="cacuPanel">
-    <div class="panel panel-max">
-        <div class="close" id="cacuClose"></div>
-        <div class="padding-box clear">
-            <div class="data fl">
-                <div class="title">收益计算器</div>
-                <table>
-                    <tr><td>投资期限：</td><td><span id="investCycle">${item.itemCycle}</span><#if item.itemCycleUnit == 1>天<#elseif item.itemCycleUnit == 2>月<#elseif item.itemCycleUnit == 3>季<#elseif item.itemCycleUnit == 4>年</#if></td></tr>
-                    <tr><td>年化利率：</td><td id="investRate">${item.itemRate+item.itemAddRate}%</td></tr>
-                    <tr><td>还款方式：</td><td id="repayMethod"><#if item.itemRepayMethod == 1>一次性还款<#elseif item.itemRepayMethod == 2>等额本息<#elseif item.itemRepayMethod == 3>先息后本<#elseif item.itemRepayMethod == 4>每日付息</#if></td></tr>
-                    <tr><td>投资金额：</td><td  class="input_text"><input id='investMoneyCalcu' type="number" ></td></tr>
-                </table>
-                <div class="cacu_button">
-                    <input id='cacu' class='cacu' type="button" value="计算">
-                    <input id='reset' class='reset' type="button" value="重置">
-                </div>
-            </div>
-            <div class="result fl">
-                <div class="title">计算结果</div>
-            <#if item.itemType == 2>
-                <table>
-                    <tr><td>每期利息：</td><td><strong id="everyIntrerst_2"></strong>元</td></tr>
-                    <tr><td>末期本息：</td><td><strong id="lastIntrerst_2"></strong>元</td></tr>
-                    <tr><td>本息合计：</td><td><strong id="total_2"></strong>元</td></tr>
-                </table>
-            <#elseif item.itemType == 1>
-                <table>
-                    <tr><td>每期本息：</td><td><strong id="intrerst_1"></strong>元</td></tr>
-                    <tr><td>本息合计：</td><td><strong id="total_1"></strong>元</td></tr>
-                </table>
-            <#else>
-                <table>
-                    <tr><td>利息收入：</td><td><strong id="intrerst_3"></strong>元</td></tr>
-                    <tr><td>本息合计：</td><td><strong id="total_3"></strong>元</td></tr>
-                </table>
-            </#if>
-                <div class="text">
-                    注：30天为1期，计算结果仅作参
-                    考，最终以实际收益为准
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<input type="hidden" value="${item.id?c}" id="itemId"/>
 </body>
 </html>

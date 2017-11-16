@@ -123,5 +123,17 @@
     where user_id=#{userId}
   </update>
 
-
+  <select id="queryBusAccountInfoByUserId"  resultType="busAccountDto">
+    SELECT
+    a.total,
+    a.cash,
+    a.frozen,
+    i.wait_income AS waitIncome,
+    a.wait + i.wait_income AS waitCapital
+    FROM
+    bus_account a
+    LEFT JOIN bus_income_stat i ON a.user_id = i.user_id
+    WHERE
+    a.user_id = #{userId}
+  </select>
 </mapper>
